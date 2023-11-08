@@ -19,11 +19,11 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun App() {
     MaterialTheme {
-        var greetingText by remember { mutableStateOf(GREETING) }
+        var greetingText by remember { mutableStateOf("Hello World!") }
         var showImage by remember { mutableStateOf(false) }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Button(onClick = {
-                greetingText = "Compose on ${getPlatformName()}: $GREETING"
+                greetingText = "Compose: ${Greeting().greet()}"
                 showImage = !showImage
             }) {
                 Text(greetingText)

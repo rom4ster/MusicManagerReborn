@@ -12,18 +12,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.rom4ster.musicmanagerreborn.database.Database
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
+
 fun App() {
+
+    val database: Database by inject()
     MaterialTheme {
         var greetingText by remember { mutableStateOf("Hello World!") }
         var showImage by remember { mutableStateOf(false) }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Button(onClick = {
-                greetingText = "Compose: ${Greeting().greet()}"
+                greetingText = "Compose: ${Greeting().greet()} ${database.p}"
                 showImage = !showImage
             }) {
                 Text(greetingText)

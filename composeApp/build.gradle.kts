@@ -34,6 +34,8 @@ kotlin {
             implementation("com.github.yausername.youtubedl-android:ffmpeg:-SNAPSHOT") // Optional
             implementation("com.github.yausername.youtubedl-android:aria2c:-SNAPSHOT") // Optional
             //implementation("androidx.startup:startup-runtime:${project.property("androidx-startup-version")}")
+            implementation("io.insert-koin:koin-android:${project.property("koin-version")}")
+            implementation("io.insert-koin:koin-androidx-compose:${project.property("koin-version")}")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

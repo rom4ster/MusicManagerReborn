@@ -56,6 +56,7 @@ kotlin {
             implementation("io.insert-koin:koin-test:${project.property("koin-version")}")
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${project.property("kotlinx-serialization-version")}")
             implementation("com.benasher44:uuid:${project.property("garbage-uuid-lib-version")}")
+            implementation("org.kotlincrypto.hash:sha1:${project.property("kotlin-crypto-version")}")
             // Navigator
             implementation("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
 

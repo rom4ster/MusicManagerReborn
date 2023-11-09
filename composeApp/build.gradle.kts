@@ -54,6 +54,7 @@ kotlin {
             implementation("dev.kotbase:couchbase-lite:${project.property("kotbase-version")}")
             implementation("io.insert-koin:koin-core:${project.property("koin-version")}")
             implementation("io.insert-koin:koin-test:${project.property("koin-version")}")
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${project.property("kotlinx-serialization-version")}")
             // Navigator
             implementation("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
 

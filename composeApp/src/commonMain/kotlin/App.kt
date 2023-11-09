@@ -21,13 +21,12 @@ import org.jetbrains.compose.resources.painterResource
 
 fun App() {
 
-    val database: Database by inject()
     MaterialTheme {
         var greetingText by remember { mutableStateOf("Hello World!") }
         var showImage by remember { mutableStateOf(false) }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Button(onClick = {
-                greetingText = "Compose: ${Greeting().greet()} ${database.p}"
+                greetingText = "Compose: ${Greeting().greet()} "
                 showImage = !showImage
             }) {
                 Text(greetingText)

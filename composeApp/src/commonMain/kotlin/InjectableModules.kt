@@ -1,4 +1,5 @@
-import com.couchbase.lite.Database
+import kotbase.Database
+
 
 object InjectableModules {
 

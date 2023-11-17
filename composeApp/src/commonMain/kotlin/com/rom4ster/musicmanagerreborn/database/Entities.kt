@@ -30,11 +30,15 @@ data class Song (
     val metadata: SongMetadata? = null,
     val ordinal: Int
 ) : AbstractEntity(Song::class) {
+
+
     override fun hashCode(): Int {
         return this.id.hashCode()
     }
 
-    override fun equals(other: Any?): Boolean = (this.id == other)
+    override fun equals(other: Any?): Boolean = if (other is Song) { songEquals(other) } else {(this.id == other)}
+
+    private fun songEquals(other: Song) : Boolean = (this.id == other.id)
 
 }
 

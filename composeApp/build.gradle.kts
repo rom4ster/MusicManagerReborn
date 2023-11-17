@@ -5,11 +5,25 @@ import org.jetbrains.compose.ExperimentalComposeLibrary
 
 
 
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.kotest)
     kotlin("plugin.serialization") version "1.9.0"
+
+}
+
+
+tasks.register("compileJava") {
+
+    dependsOn("compileDebugJavaWithJavac")
+
+}
+
+tasks.register("testClasses") {
+    dependsOn("desktopTestClasses")
 }
 
 kotlin {
@@ -22,6 +36,7 @@ kotlin {
     }
     
     jvm("desktop")
+
     
     sourceSets {
         val desktopMain by getting
@@ -37,6 +52,7 @@ kotlin {
             //implementation("androidx.startup:startup-runtime:${project.property("androidx-startup-version")}")
             implementation("io.insert-koin:koin-android:${project.property("koin-version")}")
             implementation("io.insert-koin:koin-androidx-compose:${project.property("koin-version")}")
+
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -69,6 +85,20 @@ kotlin {
 
             // Transitions
             implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(libs.kotest.framework.engine)
+                implementation(libs.kotest.assertions.core)
+
+            }
+        }
+
+        val desktopTest by getting {
+            dependencies {
+                implementation(libs.kotest.runner.junit5.jvm)
+            }
         }
     }
 }
@@ -120,8 +150,69 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "org.example.project"
+            packageName = "com.rom4ster.musicmanagerreborn"
             packageVersion = "1.0.0"
         }
     }
+
+
 }
+
+
+tasks.matching {
+    it.name == "test"
+}.configureEach {
+    dependsOn("desktopTest")
+}
+
+
+
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+
+    testLogging {
+                    events = setOf(
+                org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED,
+                org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
+            )
+
+
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+    }
+}
+
+//tasks.named<Test>("desktopTest") {
+//    outputs.upToDateWhen { false }
+//    useJUnitPlatform()
+//
+//        val specs: String? = System.getProperty("Kotest.filter.specs")
+//        val tests: String? = System.getProperty("Kotest.filter.tests")
+//        val specPair = specs.takeIf { it != null }?.let { ("kotest_filter_specs" to specs!!) }
+//        val testPair = tests.takeIf { it != null }?.let { ("kotest_filter_tests" to tests!!) }
+//        val pairs = listOfNotNull(
+//            specPair,
+//            testPair
+//        )
+//        println(pairs)
+////        if (pairs.isNotEmpty()) {
+////            this@named.setEnvironment(
+////                *pairs.toTypedArray()
+////            )
+////        }
+//        filter {
+//            isFailOnNoMatchingTests = false
+//        }
+//        testLogging {
+//            showExceptions = true
+//            showStandardStreams = true
+//            events = setOf(
+//                org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED,
+//                org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
+//            )
+//            exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+//        }
+//
+//}

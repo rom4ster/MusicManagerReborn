@@ -14,7 +14,9 @@ object Serializers {
         AlbumInfo::class to AlbumInfo::class.serializer(),
         UserPlaylist::class to UserPlaylist::class.serializer(),
         CurrentList::class to CurrentList::class.serializer(),
-    )
+    ).mapKeys {
+        it.key.qualifiedName
+    }
 }
 
 

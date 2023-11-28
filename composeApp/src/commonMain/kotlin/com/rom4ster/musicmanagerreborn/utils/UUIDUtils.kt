@@ -9,7 +9,7 @@ private const val UUID_VERSION = 5
 
 private const val UUID5_X500_NAMESPACE = "6ba7b814-9dad-11d1-80b4-00c04fd430c8"
 
-private fun <T> T.generateUUID() = this generateUUID {it.toString()}
+ fun <T> T.generateUUID() = this generateUUID {it.toString()}
 
 private infix fun <T> T.generateUUID(block: (T)->String) = nameBasedUuidOf(
     uuidFrom(UUID5_X500_NAMESPACE),

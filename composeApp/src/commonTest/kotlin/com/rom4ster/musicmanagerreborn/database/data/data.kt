@@ -17,5 +17,6 @@ val TEST_SONG_WITH_INFO = TEST_SONG.copy(
     info = AlbumInfo(
         "Edna",
         "Today",
-    )
+    ),
+
 )

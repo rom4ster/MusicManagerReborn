@@ -2,7 +2,7 @@ package com.rom4ster.musicmanagerreborn.database
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
+import kotlin.reflect.KProperty1
 
 
 @Serializable
@@ -25,11 +25,11 @@ data class Song (
     val name: String,
     val filePath: String?,
     val uploader: String?,
-    val ignoreSync: Boolean = false,
     val info: AlbumInfo? = null,
     val metadata: SongMetadata? = null,
-    val ordinal: Int
 ) : AbstractEntity(Song::class) {
+
+
 
 
     override fun hashCode(): Int {
@@ -38,6 +38,9 @@ data class Song (
 
     override fun equals(other: Any?): Boolean = if (other is Song) { songEquals(other) } else {(this.id == other)}
 
+    override fun idProp(): KProperty1<out AbstractEntity, String>  = Song::id
+
+
     private fun songEquals(other: Song) : Boolean = (this.id == other.id)
 
 }
@@ -45,12 +48,23 @@ data class Song (
 
 
 @Serializable
+data class SongEntry(
+    val id: String,
+    val ordinal: Int,
+    val ignoreSync: Boolean = false,
+)
+
+
+@Serializable
 data class UserPlaylist(
     val id: String,
+    val links: Set<String>,
     @SerialName("removed-songs")
-    val removedSongs: Set<String> = setOf(),
-    val songs: Set<String> = setOf(),
-)
+    val removedSongs: Set<SongEntry> = setOf(),
+    val songs: Set<SongEntry> = setOf(),
+) : AbstractEntity(UserPlaylist::class) {
+    override fun idProp(): KProperty1<out AbstractEntity, String>  = UserPlaylist::id
+}
 
 
 @Serializable

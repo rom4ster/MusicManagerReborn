@@ -8,6 +8,7 @@ import kotlinx.serialization.serializer
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Private
 
 
@@ -42,7 +43,11 @@ abstract class AbstractEntity {
     val validate: (KProperty<*>) -> AbstractEntityValidationErrors = { AbstractEntityValidationErrors(mapOf()) }
 
 
+
     val serializer get() =  Serializers.serializers[clazz?.qualifiedName] ?: throw UnregisteredSerializationException()
+
+    abstract fun  idProp(): KProperty1<out AbstractEntity, String>
+
 
 
 

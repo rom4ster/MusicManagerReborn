@@ -3,6 +3,8 @@ package com.rom4ster.musicmanagerreborn.database
 import com.benasher44.uuid.uuidFrom
 import com.rom4ster.musicmanagerreborn.database.data.TEST_SONG
 import com.rom4ster.musicmanagerreborn.database.data.TEST_SONG_WITH_INFO
+import com.rom4ster.musicmanagerreborn.error.DuplicateKeyException
+import com.rom4ster.musicmanagerreborn.error.KeyNotFoundException
 import com.rom4ster.musicmanagerreborn.util.withTestTypeData
 import com.rom4ster.musicmanagerreborn.utils.generateUUID
 import io.kotest.assertions.throwables.shouldThrow
@@ -27,6 +29,7 @@ import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.test.KoinTest
+import java.lang.IllegalArgumentException
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredFunctions
@@ -148,7 +151,7 @@ class DatabaseTest : FreeSpec(), KoinTest {
                     val resultList = getSerializedResults("test-db", Song::class.serializer())
 
                     resultList shouldContainAll expectedOutput
-                    resultList.map { it.ordinal } shouldContainAll expectedOutput.map { it.ordinal }
+                    resultList.map { it.name } shouldContainAll expectedOutput.map { it.name }
                     resultList.size shouldBe expectedOutput.size
 
 
@@ -192,61 +195,14 @@ class DatabaseTest : FreeSpec(), KoinTest {
 
 
                     //THEN
-                    shouldThrow<CouchbaseLiteException> { //todo duplicat key
+                    shouldThrow<DuplicateKeyException> {
                         database.add(
                         TEST_SONG_WITH_INFO
                         )
                     }
                 }
 
-                "Adding with already existing ordinal fails" {
 
-                    //Given
-
-                    //When
-                    database.add(
-                        TEST_SONG_WITH_INFO.copy(ordinal = 1)
-                    )
-
-
-                    //THEN
-                    shouldThrow<CouchbaseLiteException> { //TODO duplicat key
-                        database.add(
-                            TEST_SONG_WITH_INFO.copy(ordinal = 1)
-                        )
-                    }
-                }
-
-                "Ordinal Validation" - {
-
-                    withData(
-                        mapOf(
-                            "Must Be Next Number" to TEST_SONG_WITH_INFO.ordinal+10,
-                            "Must Not Be Negative" to -1,
-                            "Must Not Be Zero" to 0
-                        )
-                    ) {ordinal ->
-                        //Given
-                        val document = MutableDocument()
-                        document.setJSON(
-                            json.encodeToString(
-                                TEST_SONG_WITH_INFO.serializer.asTypedSerializer(),
-                                TEST_SONG_WITH_INFO
-                            )
-                        )
-                        kotbaseDatabase.save(document)
-
-                        //When
-
-
-                        //THEN
-                        shouldThrow<CouchbaseLiteException> { //TODO Other exception, not this
-                            database.add(
-                                TEST_SONG_WITH_INFO.copy(ordinal = ordinal)
-                            )
-                        }
-                    }
-                }
                 }
 
             }
@@ -289,7 +245,7 @@ class DatabaseTest : FreeSpec(), KoinTest {
                     val resultList = getSerializedResults("test-db", Song::class.serializer())
 
                     resultList shouldContainAll expectedOutput
-                    resultList.map { it.ordinal } shouldContainAll expectedOutput.map { it.ordinal }
+                    resultList.map { it.name } shouldContainAll expectedOutput.map { it.name }
                     resultList.size shouldBe expectedOutput.size
 
 
@@ -315,7 +271,7 @@ class DatabaseTest : FreeSpec(), KoinTest {
 
 
                     //THEN
-                    shouldThrow<CouchbaseLiteException> { //todo NotFound
+                    shouldThrow<KeyNotFoundException> {
                         database.remove(
                             "this is not Right".generateUUID()
                         )
@@ -352,45 +308,6 @@ class DatabaseTest : FreeSpec(), KoinTest {
             }
             "-" - {
 
-                "Updating with already existing ordinal fails" {
-
-
-
-                    //GIVEN
-
-                    val testSongNewId = TEST_SONG_WITH_INFO.copy(
-                        id = "NOOOO",
-                        ordinal = 100
-                    )
-                    val document = MutableDocument()
-                    document.setJSON(
-                        json.encodeToString(
-                            TEST_SONG_WITH_INFO.serializer.asTypedSerializer(),
-                            TEST_SONG_WITH_INFO
-                        )
-                    )
-                    kotbaseDatabase.save(document)
-
-                    val document2 = MutableDocument()
-                    document.setJSON(
-                        json.encodeToString(
-                            testSongNewId.serializer.asTypedSerializer(),
-                            testSongNewId
-                        )
-                    )
-                    kotbaseDatabase.save(document2)
-
-
-                    //WHEN
-                    //THEN
-                    shouldThrow<CouchbaseLiteException>{ // WRONG EXCEPTION
-                        database.update(uuidFrom(document.id), TEST_SONG.copy(ordinal = 100))
-                    }
-
-
-
-                }
-
 
                 "Updating not found fails" {
 
@@ -410,7 +327,7 @@ class DatabaseTest : FreeSpec(), KoinTest {
 
 
                     //THEN
-                    shouldThrow<CouchbaseLiteException> { //todo NotFound
+                    shouldThrow<KeyNotFoundException> {
                         database.update(
                             "this is not Right".generateUUID(),
                             TEST_SONG

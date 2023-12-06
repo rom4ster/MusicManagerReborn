@@ -9,7 +9,6 @@ val TEST_SONG = Song(
     "testName",
     null,
     null,
-    ordinal = 23
 )
 
 val TEST_SONG_WITH_INFO = TEST_SONG.copy(

@@ -1,5 +1,6 @@
 package com.rom4ster.musicmanagerreborn.database
 
+import com.rom4ster.musicmanagerreborn.utils.EXPRESSIONCONSTANTS
 import com.rom4ster.musicmanagerreborn.utils.OPERATOR
 import com.rom4ster.musicmanagerreborn.utils.asExpression
 import com.rom4ster.musicmanagerreborn.utils.asValueExpression
@@ -17,4 +18,10 @@ data class PropertyEquality<T : Any, V>(
     override fun resolver(): Expression =
         OPERATOR.EQUAL.operatorFunction(this.property.asExpression(), this.value.asValueExpression())
 
+}
+
+data class ConstantObject(
+    val constant: EXPRESSIONCONSTANTS
+) : QueryObject {
+    override fun resolver(): Expression = constant.exp
 }

@@ -1,7 +1,8 @@
-package org.example.project
+package com.rom4ster.musicmanagerreborn
 
 import App
 import InjectableModules
+import PlatformModules
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,7 +18,9 @@ class MainActivity : ComponentActivity() {
         startKoin {
             androidContext(this@MainActivity)
             modules(InjectableModules.module())
+            modules(PlatformModules.module())
         }
+
         setContent {
             App()
         }

@@ -19,6 +19,10 @@ enum class OPERATOR(val operatorFunction: (exp: Expression, other: Expression) -
     NOT({exp, other -> exp.isNot(other) }),
 }
 
+enum class EXPRESSIONCONSTANTS(val exp: Expression) {
+    TRUE(true.asValueExpression()),
+    FALSE(true.asValueExpression()),
+}
 
 
 

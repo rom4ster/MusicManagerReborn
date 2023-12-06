@@ -1,21 +1,31 @@
 import kotbase.Database
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import org.koin.core.qualifier.named
 
 
 object InjectableModules {
 
-    private const val DATBASE_NAME = "appDb"
+    internal const val SONG_DATABASE_NAME = "songDb"
+    internal const val USER_PLAYLIST_DATABASE_NAME = "playlistDb"
 
     @OptIn(ExperimentalSerializationApi::class)
     fun module() = org.koin.dsl.module {
-        single<Database> {
-            Database(DATBASE_NAME)
+
+        listOf(
+            SONG_DATABASE_NAME,
+            USER_PLAYLIST_DATABASE_NAME
+        ).forEach { name ->
+
+            single<Database>(named(name)) {
+                Database(name)
+            }
+
+            single<com.rom4ster.musicmanagerreborn.database.Database>(named(name)) {
+                com.rom4ster.musicmanagerreborn.database.Database(get(named(name)))
+            }
         }
 
-        single<com.rom4ster.musicmanagerreborn.database.Database> {
-            com.rom4ster.musicmanagerreborn.database.Database()
-        }
 
         single {
             Json {explicitNulls = false}

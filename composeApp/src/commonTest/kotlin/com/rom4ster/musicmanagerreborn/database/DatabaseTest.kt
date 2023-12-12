@@ -85,7 +85,9 @@ class DatabaseTest : FreeSpec(), KoinTest {
                 kotbaseDatabase.getDocument(id)?.let { it1 -> kotbaseDatabase.delete(it1) }
             }
         }
-        database = Database()
+        database = Database(
+            kotbaseDatabase
+        )
 
         super.beforeEach(testCase)
 
@@ -237,7 +239,7 @@ class DatabaseTest : FreeSpec(), KoinTest {
 
                     //When
                     database.remove(
-                        uuidFrom(document.id)
+                        expectedSong
                     )
 
                     //Then
@@ -273,7 +275,12 @@ class DatabaseTest : FreeSpec(), KoinTest {
                     //THEN
                     shouldThrow<KeyNotFoundException> {
                         database.remove(
-                            "this is not Right".generateUUID()
+                            Song(
+                                "nopenoepnotfound",
+                                "",
+                                "",
+                                ""
+                            )
                         )
                     }
                 }
@@ -296,7 +303,7 @@ class DatabaseTest : FreeSpec(), KoinTest {
 
 
                     //WHEN
-                    database.update(uuidFrom(document.id), TEST_SONG)
+                    database.update(TEST_SONG_WITH_INFO.id, TEST_SONG)
 
                     //THEN
                     val resultList = getSerializedResults("test-db", Song::class.serializer())
@@ -329,7 +336,7 @@ class DatabaseTest : FreeSpec(), KoinTest {
                     //THEN
                     shouldThrow<KeyNotFoundException> {
                         database.update(
-                            "this is not Right".generateUUID(),
+                            "bad bad bad id",
                             TEST_SONG
                         )
                     }

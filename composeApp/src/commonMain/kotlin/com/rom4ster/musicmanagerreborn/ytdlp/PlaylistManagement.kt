@@ -70,9 +70,9 @@ fun diff(userPlaylistId: String) {
         try {
             songDb.add(
                 Song(
-                    it.id.generateUUID().toString(),
+                    it.id,
                     it.title,
-                    YT_FILE_DIR,
+                    "$YT_FILE_DIR/${it.id}",
                     it.uploader
                 )
             )
@@ -84,6 +84,7 @@ fun diff(userPlaylistId: String) {
         // during add, download song file
         ytWrapper.download("https://www.youtube.com/watch?v=${it.id}")
 
+        // add song to playlist and update database with change
         playlistSongs.add(
             SongEntry(
                 it.id,
@@ -92,27 +93,27 @@ fun diff(userPlaylistId: String) {
         )
 
         playlistDb.update(
-            uuidFrom(playlist.id),
+            playlist.id,
             playlist.copy(
             songs = playlistSongs
         )
         )
 
+        // any remaining songs in local list that are not supposed to be ignored must be moved to removed songs list
+        // global songs do not need to removed here
         val playlistRemovedSongs = playlist.removedSongs.toMutableSet()
 
         local.forEach { entry ->
             if (!entry.ignoreSync) {
+                playlistSongs.remove(entry)
                 playlistRemovedSongs.add(entry)
-
-
-
             }
         }
 
 
         playlistDb.update(
-            uuidFrom(playlist.id),
-            playlist.copy(removedSongs = playlistRemovedSongs)
+            playlist.id,
+            playlist.copy(removedSongs = playlistRemovedSongs, songs = playlistSongs)
         )
 
 

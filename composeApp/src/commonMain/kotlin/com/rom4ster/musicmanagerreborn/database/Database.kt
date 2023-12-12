@@ -29,6 +29,7 @@ import kotlin.reflect.KProperty1
 
 
 
+@Suppress("UNCHECKED_CAST")
 class Database(
     val database: Database
 ) {
@@ -119,14 +120,46 @@ class Database(
 
 
 
-    fun  remove(id: Uuid) {
-        val document = database.getDocument(id.toString()) ?: throw KeyNotFoundException("$id not found")
+    fun <T : AbstractEntity>  remove(id: String, entity: T) {
+        val document = QueryBuilder
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+            .where(
+                PropertyEquality(entity.idProp(), id).resolver()
+            )
+            .execute()
+            .allResults()
+            .firstOrNull()
+            ?.let {
+                database.getDocument(it.getValue("id") as String)
+            }
+            ?: throw KeyNotFoundException("$id not found")
         database.delete(document)
     }
 
-    fun <T : AbstractEntity> update(id: Uuid, entity: T, validationProps: List<KProperty<*>> = listOf()) {
+    fun  remove(entity: AbstractEntity)  {
+       val p: KProperty1<AbstractEntity, String> =  entity.idProp() as KProperty1<AbstractEntity, String>
+        val en = p.get(entity)
+        remove(en, entity)
+    }
 
-        val oldDocument = database.getDocument(id.toString()) ?: throw KeyNotFoundException("$id not found")
+
+
+    fun <T : AbstractEntity> update(id: String, entity: T, validationProps: List<KProperty<*>> = listOf()) {
+
+        val oldDocument = QueryBuilder
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+            .where(
+                PropertyEquality(entity.idProp(), id).resolver()
+            )
+            .execute()
+            .allResults()
+            .firstOrNull()
+            ?.let {
+                database.getDocument(it.getValue("id") as String)
+            }
+            ?: throw KeyNotFoundException("$id not found")
         val document = oldDocument.toMutable()
         document.setJSON(json.encodeToString(entity.serializer.asTypedSerializer(), entity))
         validationProps.map {

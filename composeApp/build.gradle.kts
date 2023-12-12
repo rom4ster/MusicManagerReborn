@@ -85,6 +85,8 @@ kotlin {
 
             // Transitions
             implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
+
+            implementation(libs.kotlinx.coroutines.core)
         }
 
         val commonTest by getting {
@@ -92,7 +94,7 @@ kotlin {
                 implementation(libs.kotest.framework.engine)
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.kotest.framework.datatest)
-
+                implementation("io.mockk:mockk:1.13.8")
 
 
             }
@@ -140,8 +142,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     dependencies {
         debugImplementation(libs.compose.ui.tooling)

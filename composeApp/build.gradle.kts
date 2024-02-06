@@ -30,7 +30,7 @@ kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "1.8"
+                jvmTarget = "17"
             }
         }
     }
@@ -58,6 +58,9 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation("com.github.goxr3plus:java-stream-player:${project.property("java-stream-player-version")}")
             implementation("com.github.sapher:youtubedl-java:${project.property("sapher-youtubedl-commit")}")
+            implementation("com.github.tulskiy:jkeymaster:1.3")
+            implementation("com.1stleg:jnativehook:2.0.2")
+
         }
         commonMain.dependencies {
 
@@ -66,6 +69,8 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
+            implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
             implementation("dev.kotbase:couchbase-lite:${project.property("kotbase-version")}")
@@ -87,6 +92,10 @@ kotlin {
             implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
 
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.swipebox)
+            //implementation(libs.squircle.shape)
+            //implementation ("com.github.stoyan-vuchev:squircle-shape:1.0.6")
+
         }
 
         val commonTest by getting {

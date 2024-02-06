@@ -1,3 +1,6 @@
+import com.rom4ster.musicmanagerreborn.audio.AudioPlayer
+import com.rom4ster.musicmanagerreborn.audio.Player
+import com.rom4ster.musicmanagerreborn.utils.AppContextProvider
 import com.rom4ster.musicmanagerreborn.ytdlp.YTDLP
 import com.rom4ster.musicmanagerreborn.ytdlp.YTWrapper
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -11,5 +14,16 @@ object PlatformModules {
         single {
             YTWrapper(androidContext())
         } bind YTDLP::class
+
+        factory {
+            AppContextProvider(androidContext())
+        }
+
+        factory {
+            Player(androidContext())
+        } bind AudioPlayer::class
+
+
+
     }
 }

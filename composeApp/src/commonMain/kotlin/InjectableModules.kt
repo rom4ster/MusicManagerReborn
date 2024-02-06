@@ -1,3 +1,4 @@
+import com.rom4ster.musicmanagerreborn.ui.actions.PlaylistsActionController
 import kotbase.Database
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -12,6 +13,8 @@ object InjectableModules {
     @OptIn(ExperimentalSerializationApi::class)
     fun module() = org.koin.dsl.module {
 
+
+        //Inject databases
         listOf(
             SONG_DATABASE_NAME,
             USER_PLAYLIST_DATABASE_NAME
@@ -26,7 +29,12 @@ object InjectableModules {
             }
         }
 
+        //Inject action controllers
+        single<PlaylistsActionController>{
+            PlaylistsActionController()
+        }
 
+        //Inject Json
         single {
             Json {explicitNulls = false}
         }

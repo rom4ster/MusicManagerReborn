@@ -17,6 +17,8 @@ kotlin = "1.9.20"
 junit = "4.13.2"
 kotest = "5.8.0"
 coroutines = "1.8.0-RC"
+squircle-shape = "1.0.5"
+swipebox = "1.0.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -39,6 +41,8 @@ kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.
 kotest-framework-datatest = { module= "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
 kotest-runner-junit5-jvm = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+squircle-shape = { group = "com.github.stoyan-vuchev", name = "squircle-shape", version.ref = "squircle-shape" }
+swipebox = { group = "io.github.kevinnzou", name="compose-swipebox-multiplatform", version.ref = "swipebox"}
 
 
 [plugins]

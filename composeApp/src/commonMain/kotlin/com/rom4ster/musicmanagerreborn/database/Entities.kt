@@ -58,6 +58,7 @@ data class SongEntry(
 @Serializable
 data class UserPlaylist(
     val id: String,
+    val name: String,
     val links: Set<String>,
     @SerialName("removed-songs")
     val removedSongs: Set<SongEntry> = setOf(),

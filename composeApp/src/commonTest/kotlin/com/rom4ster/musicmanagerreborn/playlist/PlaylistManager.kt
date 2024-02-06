@@ -1,8 +1,13 @@
 @file:Suppress("INLINE_FROM_HIGHER_PLATFORM")
 package com.rom4ster.musicmanagerreborn.playlist
 
-import com.rom4ster.musicmanagerreborn.database.*
+import com.rom4ster.musicmanagerreborn.database.ClassMaps
+import com.rom4ster.musicmanagerreborn.database.Database
 import com.rom4ster.musicmanagerreborn.database.Database.QueryDataResult
+import com.rom4ster.musicmanagerreborn.database.PropertyEquality
+import com.rom4ster.musicmanagerreborn.database.Song
+import com.rom4ster.musicmanagerreborn.database.SongEntry
+import com.rom4ster.musicmanagerreborn.database.UserPlaylist
 import com.rom4ster.musicmanagerreborn.utils.generateUUID
 import com.rom4ster.musicmanagerreborn.ytdlp.*
 import io.kotest.core.spec.style.FreeSpec
@@ -37,6 +42,7 @@ init {
     val queryRet = listOf(
         UserPlaylist(
             id=userPlaylistId,
+            name="name",
             links= playlists,
             songs= setOf(
                 SongEntry(
@@ -91,12 +97,14 @@ init {
 
         diff(userPlaylistId)
 
-        verify(exactly = 1) { songdb.add(Song(
+        verify(exactly = 1) { songdb.add(
+            Song(
             "add",
             "sup",
             "$YT_FILE_DIR/add",
             "holo"
-        )) }
+        )
+        ) }
 
         val pl = queryRet.first().serializedResult ?: throw Exception()
         val pl2 = pl.copy(

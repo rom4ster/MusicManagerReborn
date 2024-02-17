@@ -28,3 +28,4 @@ enum class InputTypes {
     TEXT_FIELD_MULTILINE,
 
 }
+

@@ -1,3 +1,4 @@
+import com.rom4ster.musicmanagerreborn.ui.actions.PlaylistActionController
 import com.rom4ster.musicmanagerreborn.ui.actions.PlaylistsActionController
 import kotbase.Database
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -32,6 +33,9 @@ object InjectableModules {
         //Inject action controllers
         single<PlaylistsActionController>{
             PlaylistsActionController()
+        }
+        single<PlaylistActionController>{
+            PlaylistActionController()
         }
 
         //Inject Json

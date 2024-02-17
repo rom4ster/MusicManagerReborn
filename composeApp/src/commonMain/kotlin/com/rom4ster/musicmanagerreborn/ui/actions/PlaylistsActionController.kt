@@ -10,9 +10,11 @@ import com.rom4ster.musicmanagerreborn.utils.add
 import com.rom4ster.musicmanagerreborn.utils.asEnumValue
 import com.rom4ster.musicmanagerreborn.utils.verifiedCast
 import com.rom4ster.musicmanagerreborn.ytdlp.diff
+import inject
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class PlaylistsActionController : ActionController<Playlists> {
+
 
 
 
@@ -39,7 +41,7 @@ class PlaylistsActionController : ActionController<Playlists> {
 
             }
             Actions.LOAD_FROM_DB -> {
-                input.playlists.compareAndSet(input.playlists.value, PlaylistState.getAll())
+                println("input.playlists.compareAndSet(input.playlists.value, PlaylistState.getAll())")
             }
             Actions.ADD_PLAYLIST -> {
                 PlaylistState.add(actionData.verifiedCast())

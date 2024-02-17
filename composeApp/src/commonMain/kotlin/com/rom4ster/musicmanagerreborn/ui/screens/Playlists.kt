@@ -1,30 +1,34 @@
 package com.rom4ster.musicmanagerreborn.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.PointerMatcher
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.onClick
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.DropdownMenuItem
+
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.ModeEdit
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +39,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerButton
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.isSecondaryPressed
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import com.kevinnzou.swipebox.SwipeBox
@@ -49,8 +56,8 @@ import com.rom4ster.musicmanagerreborn.utils.*
 import inject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -193,13 +200,25 @@ class Playlists (val playlists: MutableStateFlow<List<PlaylistState>>) : Screen 
                             syncPlaylist(sync)
                             sync = ""
                         }
+                        var pointerInput: DpOffset? = null
                         Card(
                             modifier = Modifier.padding(
                                 horizontal = CARD_PADDING_PLAYLISTS_HORIZONTAL.dp,
                                 vertical = CARD_PADDING_PLAYLISTS_VERTICAL.dp
-                            ).onClick(matcher = PointerMatcher.mouse(PointerButton.Secondary))
-                            {
-                                showContextMenu = true
+                            ).pointerInput(0) {
+                                awaitEachGesture {
+                                    awaitPointerEvent().let { event ->
+                                        if (
+                                            event.type == PointerEventType.Press &&
+                                            event.buttons.isSecondaryPressed
+                                            ) {
+                                            waitForUpOrCancellation()
+                                            val coord = event.changes.first().position
+                                            pointerInput = DpOffset(coord.x.dp, coord.y.dp)
+                                            showContextMenu = true
+                                        }
+                                    }
+                                }
                             }.combinedClickable (
                                 onLongClick = {
                                     showContextMenu = true
@@ -265,32 +284,42 @@ class Playlists (val playlists: MutableStateFlow<List<PlaylistState>>) : Screen 
                                     Text(playlist.name)
                                     Text("${playlist.songs.size} ${"song" pluralizeWithCount playlist.songs.size}")
                                 }
+                                val interactionSource = remember { MutableInteractionSource() }
+                                println(pointerInput)
                                 DropdownMenu(
                                     expanded = showContextMenu,
                                     modifier = Modifier.align(Alignment.BottomEnd),
+                                    offset = {
+                                        println(pointerInput)
+                                        pointerInput ?: DpOffset(0.dp, 0.dp)
+                                    }(),
                                     onDismissRequest = { showContextMenu = false },
                                 ) {
+                                    println(pointerInput)
                                     DropdownMenuItem(
                                         onClick = {
                                             recomposer = playlist
+                                        },
+                                        text = {
+                                            Text("Edit")
                                         }
-                                    ) {
-                                        Text("Edit")
-                                    }
+                                    )
                                     DropdownMenuItem(
                                         onClick = {
                                             sync = playlist.id
+                                        },
+                                        text = {
+                                            Text("Sync")
                                         }
-                                    ) {
-                                        Text("Sync")
-                                    }
+                                    )
                                     DropdownMenuItem(
                                         onClick = {
                                             removal = playlist
+                                        },
+                                        text =  {
+                                            Text("Delete")
                                         }
-                                    ) {
-                                        Text("Delete")
-                                    }
+                                    )
                                 }
                             }
                         }

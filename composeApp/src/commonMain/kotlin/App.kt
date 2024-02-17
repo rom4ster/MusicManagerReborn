@@ -1,14 +1,22 @@
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.toLowerCase
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.rom4ster.musicmanagerreborn.database.SongEntry
+import com.rom4ster.musicmanagerreborn.ui.navigation.BottomSheet
 import com.rom4ster.musicmanagerreborn.ui.screens.Home
 import com.rom4ster.musicmanagerreborn.ui.screens.Playlist
 import com.rom4ster.musicmanagerreborn.ui.screens.Playlists
@@ -23,7 +31,7 @@ import java.util.*
 
 
 val renderHack = MutableStateFlow(0)
-
+lateinit var plTest: MutableStateFlow<List<PlaylistState>>
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 
@@ -72,6 +80,7 @@ fun App() {
         }
         l.toList()
     })
+        plTest = p
 
 //    Home(
 //        t
@@ -101,7 +110,15 @@ fun App() {
                         BackPressureHandler.unregister(observer)
                     }
                 }
-                CurrentScreen()
+                Scaffold(
+                    topBar = {},
+                    bottomBar = { BottomSheet() }
+                ) { paddingValues ->
+                    Box(
+                        modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(paddingValues)
+                    ) { CurrentScreen() }
+
+                }
 
             }
         } else {
@@ -114,7 +131,16 @@ fun App() {
                ) {
                nav ->
                appNav = nav
-               CurrentScreen()
+               Scaffold(
+                   topBar = {},
+                   bottomBar = { BottomSheet() }
+               ) { paddingValues ->
+                   Box(
+                       modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(paddingValues)
+                   ) { CurrentScreen() }
+
+               }
+
            }
         }
     }

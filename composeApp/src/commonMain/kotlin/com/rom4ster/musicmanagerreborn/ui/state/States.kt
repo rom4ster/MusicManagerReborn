@@ -10,6 +10,7 @@ import inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
 import org.koin.core.qualifier.named
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
@@ -63,6 +64,27 @@ data class PlaylistState(
                     println("add" +pl)
                     //playlistDb.add(pl)
                 }
+            }
+        }
+
+        fun update(state: PlaylistState) {
+            val removed = playlistDb.query(
+                PropertyEquality(UserPlaylist::id, state.id),
+                UserPlaylist::removedSongs,
+                serializer = ListSerializer(SongEntry.serializer())
+            ).map {
+                it.serializedResult as SongEntry
+            }
+
+            UserPlaylist(
+                state.id,
+                state.name,
+                state.links,
+                removed.toSet(),
+                state.songs.keys
+            ).let {
+                println("update ${it.id} $it")
+                //playlistDb.update(it.id, it)
             }
         }
 
@@ -130,7 +152,6 @@ data class SongState(
 
     companion object {
 
-
         fun getById(id: String): SongState = songDb.query(
             PropertyEquality(Song::id, id),
             *allProps<Song>(),
@@ -138,6 +159,39 @@ data class SongState(
         )
             .first()
             .serializedResult as SongState
+
+        fun add(vararg states: SongState) {
+            states.forEach {
+                Song(
+                    it.id,
+                    it.name,
+                    it.filePath,
+                    it.uploader,
+                    it.info,
+                    it.metadata
+                ).let { song ->
+                    println("add" +song)
+                    //songDb.add(song)
+                }
+            }
+        }
+
+        fun delete(vararg states: SongState) {
+            states.forEach {
+                songDb.remove(
+                    it.id,
+                    Song(
+                        it.id,
+                        it.name,
+                        it.filePath,
+                        it.uploader,
+                        it.info,
+                        it.metadata
+                    )
+                )
+                println("remove" + it)
+            }
+        }
     }
 }
 
